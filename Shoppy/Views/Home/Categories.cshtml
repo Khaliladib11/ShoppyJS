@@ -1,0 +1,147 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewBag.Title = Model.Category + " | Shoppy Store";
+}
+
+<section class="category-section">
+    <div class="product-path">
+        <a href="/home">Home</a>
+        <i class="material-icons">keyboard_arrow_right</i>
+        <a href="#">Products</a>
+        <i class="material-icons">keyboard_arrow_right</i>
+        <p>@Model.Category</p>
+    </div>
+
+    <div class="product-filter">
+        <form method="post">
+            <div>
+                <label><b>Category:</b></label>
+                <select name="category" class="form-select">
+                    @{
+                        if (Model.Category == "All")
+                        {
+                            <option value="All" selected>All</option>
+                        }
+                        else
+                        {
+                            <option value="All">All</option>
+                        }
+                    }
+
+                    @{
+                        foreach (var category in Model.Categories)
+                        {
+                            if (Model.Category == @category.CategoryName)
+                            {
+                                <option value="@category.CategoryName" selected>@category.CategoryName</option>
+                            }
+                            else
+                            {
+                                <option value="@category.CategoryName">@category.CategoryName</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <input class="product-search" type="text" name="searchProduct" value="@Model.Search" placeholder="search here" />
+            <div>
+                <label><b>Sort By:</b></label>
+                <select name="sortBy" class="form-select">
+                    @{
+                        foreach (var sortBy in Model.SortByList)
+                        {
+                            if (Model.SortBy == sortBy)
+                            {
+                                <option value="@sortBy" selected>@sortBy</option>
+                            }
+                            else
+                            {
+                                <option value="@sortBy">@sortBy</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="price_range">
+                <input type="range" name="min_range" value="@Model.MinPrice" min="0" max="500" step="5" id="min_Price" />
+                <div><b>Min Price:</b>    <span id="min_value"></span></div>
+                <input type="range" name="max_range" value="@Model.MaxPrice" min="0" max="800" step="5" id="max_Price" class="range-test" />
+                <div><b>Max Price:</b>    <span id="max_value"></span></div>
+            </div>
+            <input type="submit" name="Filter" value="Filter" class="filter-btn" />
+        </form>
+    </div>
+
+    @*<div>
+        <form method="post">
+            <input type="text" name="name" value="" asp-for="Search" />
+            <select asp-for="Category">
+                @{
+                    foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.CategoryName">@category.CategoryName</option>
+                    }
+                }
+            </select>
+            <select asp-for="SortBy">
+                @{
+                    foreach (var sortyBy in Model.SortByList)
+                    {
+                        <option value="@sortyBy">@sortyBy</option>
+                    }
+                }
+            </select>
+            <input type="range" name="name" value="" asp-for="MinPrice" />
+            <input type="range" name="name" value="" asp-for="MaxPrice" />
+            <button type="submit">Filter</button>
+        </form>
+    </div>*@
+
+    <div class="products-container">
+        <div class="row">
+            @{
+                foreach (var Product in Model.Products)
+                {
+                    <div class="product-container">
+                        <a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid"><img src="@Product.CoverImage" alt="Alternate Text" asp-append-version="true" /></a>
+                        <button>Add To Cart</button>
+                        <div class="product-details">
+                            <div class="product-category">
+                                @{
+                                    foreach (var category in Product.Categories)
+                                    {
+                                        <a href="#">@category.CategoryName,</a>
+                                    }
+                                }
+                            </div>
+                            <div class="product-name"><a href="#">@Product.ProductName</a></div>
+                            <div class="product-price">$@Product.ProductPrice</div>
+                            <div class="rating">
+                                @{
+                                    int count = 0;
+                                    for (int i = 0; i < Product.ProductRate; i++)
+                                    {
+                                        <i class='fas fa-star'></i>
+                                        count = count + 1;
+                                    }
+                                    for (int j = count; j < 5; j++)
+                                    {
+                                        <i class='far fa-star'></i>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+</section>
+
+
+
+@section Scripts{
+    <script src="~/js/range.js"></script>
+}

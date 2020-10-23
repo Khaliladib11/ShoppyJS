@@ -1,0 +1,57 @@
+﻿@model LoginModelView
+
+@{
+    ViewBag.Title = "Login | Shoopy";
+}
+
+<div class="user_login">
+
+    <h1><b>Login</b></h1>
+
+    <form method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input type="text" asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input type="password" asp-for="Password" class="form-control" id="loginPassToEncrypte" />
+            <input type="password" asp-for="EncryptedPass" id="loginHiddinPassword"  class="hiddinField"/>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input asp-for="RememberMe" />
+            <label asp-for="RememberMe"></label>
+            <a href="#">Forget Your Password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+    </form>
+
+
+</div>
+<div class="user_social">
+    <div class="user_social_head">
+        <div class="user_head_div"></div>
+        <h3>OR</h3>
+        <div class="user_head_div"></div>
+    </div>
+    <div class="user_social_section">
+        <a href="#" class="login-with login-with_reg login-with-fb">
+            <i class='fab fa-facebook-f' style="color: white"></i>
+            Login with facebook
+        </a>
+        <a href="#" class="login-with login-with_reg login-with-google">
+            <i class='fab fa-google' style="color: white"></i>
+            Login with Google
+        </a>
+    </div>
+
+</div>
+
+@section scripts {
+    <script src="~/js/loginEncryption.js"></script>
+}

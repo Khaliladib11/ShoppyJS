@@ -1,0 +1,45 @@
+﻿@model ViewCartModelView
+
+<div class="cart_container floating_container">
+    @{
+        if (Model.ShoppingCartItem == null || Model.ShoppingCartItem.Count == 0)
+        {
+            <svg width="5em" height="5em" viewBox="0 0 16 16" class="bi bi-cart2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z" />
+            </svg>
+            <h3>No Product in the cart</h3>
+        }
+        else
+        {
+            <div class="cart_container_products">
+                @{
+                    float totalPrice = 0;
+                    foreach (var shoppingItem in Model.ShoppingCartItem)
+                    {
+                        float total = shoppingItem.quantity * shoppingItem.productPrice;
+                        totalPrice = totalPrice + total;
+                        <div class="cart_container_product">
+                            <img src="@shoppingItem.productImg" alt="Alternate Text" />
+                            <div class="cart_container_product_info">
+                                <span> @shoppingItem.productName</span>
+                                <span>@shoppingItem.quantity * @shoppingItem.productPrice $</span>
+                            </div>
+                            <svg width="3em" height="3em" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="cart_container_links">
+                <div>
+                    Total: <span>@totalPrice $</span>
+                </div>
+                <a asp-controller="ShoppingCart" asp-action="ViewCart" asp-route-uid="@ViewBag.uid" class="cart_container_links_viewCart cart_container_links_btn">View Cart</a>
+                <a href="#" class="cart_container_links_checkout cart_container_links_btn">Checkout</a>
+            </div>
+        }
+    }
+
+
+</div>

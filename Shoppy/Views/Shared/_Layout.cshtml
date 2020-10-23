@@ -1,0 +1,306 @@
+﻿
+@using Microsoft.AspNetCore.Http;
+@{ 
+    ViewBag.username = Context.Session.GetString("username");
+    ViewBag.role = Context.Session.GetString("role");
+    ViewBag.uid = Context.Session.GetInt32("uid");
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+
+
+
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
+
+    <environment exclude="Development">
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous"
+              asp-fallback-href="~/lib/twitter-bootstrap/css/bootstrap.css"
+              asp-fallback-test-class="sr-only"
+              asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              asp-suppress-fallback-integrity="true">
+    </environment>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8b8a5586a6.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+        <div class="navbar-brand logo">
+            <a asp-controller="home" asp-action="index">
+                Shoppy
+                <img src="~/images/assets/online-shopping.png" class="bag" />
+            </a>
+        </div>
+        <div class="navigation-bar">
+            <ul class="nav-links">
+                <li><a asp-controller="home" asp-action="index">Home</a></li>
+                <li class="dropdown">
+                    <a asp-controller="home" asp-action="Categories" asp-route-category="All">Products</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-menu-row">
+                            <ul class="dropdown-menu-ul">
+                                <li><a asp-controller="home" asp-action="Categories" asp-route-category="Clothing">Clothing</a></li>
+                                <li><a asp-controller="home" asp-action="Categories" asp-route-category="Shoes">Shoes</a></li>
+                                <li><a asp-controller="home" asp-action="Categories" asp-route-category="Accessories">Accessories</a></li>
+                                <li><a asp-controller="home" asp-action="Categories" asp-route-category="Electronics">Electronics</a></li>
+                                <li><a asp-controller="home" asp-action="Categories" asp-route-category="Electronics">Men</a></li>
+                                <li><a asp-controller="home" asp-action="Categories" asp-route-category="Electronics">Women</a></li>
+                            </ul>
+                            <img src="~/images/assets/undraw_add_to_cart_vkjp.png" />
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-bar-responsive">
+            <div class="nav-bar-responsive-close">
+                @*<i class="material-icons">close</i>*@
+                <svg height="24px" viewBox="0 0 365.696 365.696" width="24px" xmlns="http://www.w3.org/2000/svg"><path d="m243.1875 182.859375 113.132812-113.132813c12.5-12.5 12.5-32.765624 0-45.246093l-15.082031-15.082031c-12.503906-12.503907-32.769531-12.503907-45.25 0l-113.128906 113.128906-113.132813-113.152344c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503907-12.5 32.769531 0 45.25l113.152344 113.152344-113.128906 113.128906c-12.503907 12.503907-12.503907 32.769531 0 45.25l15.082031 15.082031c12.5 12.5 32.765625 12.5 45.246093 0l113.132813-113.132812 113.128906 113.132812c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082031c12.5-12.503906 12.5-32.769531 0-45.25zm0 0" /></svg>
+            </div>
+            <ul class="nav-bar-responsive-links">
+                <li><a asp-controller="home" asp-action="index">Home</a></li>
+                <li><a asp-controller="home" asp-action="Categories" asp-route-category="All">Product</a></li>
+                <li><a href="#">Account</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">About</a></li>
+                @{
+                    if (ViewBag.username != null)
+                    {
+                        <li><a href="#">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="#">Login</a></li>
+                    }
+                }
+            </ul>
+        </div>
+
+        <div class="icons row">
+
+            <div class="username">
+                @{
+
+                    if (ViewBag.username != null)
+                    {
+                        <div><span class="hello_word">hello</span><a href="#" class="username_link">@ViewBag.username</a></div>
+                    }
+                    else
+                    {
+                        <div><span class="hello_word">hello</span><a asp-controller="account" asp-action="login" class="username_link">Sign in</a></div>
+                    }
+                }
+            </div>
+            <div class="user-icon">
+
+                <i class='fas fa-user-alt' id="seach_icon nav-icon"></i>
+                @{
+                    if (ViewBag.username != null)
+                    {
+                        if (ViewBag.role != "admin")
+                        {
+                            <div class="user_panel floating_container">
+                                <ul class="user_panel_ul">
+                                    <li><a href="#">My Account</a></li>
+                                    <li><a href="#">Orders</a></li>
+                                    <li><a asp-controller="account" asp-action="Logout">Logout</a></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        <div class="user_icon_container floating_container">
+                            <h4>Login Form</h4>
+                            <form asp-controller="account" asp-action="login" method="post">
+                                <input type="text" name="email" value="" placeholder="email address" />
+                                <input type="password" name="Password" value="" placeholder="Password" id="passToEncrypt" />
+                                <input type="password" name="EncryptedPass" id="hiddinPass" class="hiddinField" />
+                                <button type="submit" id="encrypted_btn"><span>Login Account</span></button>
+                            </form>
+                            <div class="user-icon-container-div">
+                                <label>
+                                    <input type="checkbox" name="name" value="" />
+                                    Remember Me
+                                </label>
+                                <a href="#">Forget Your Password?</a>
+                            </div>
+                            <div class="user-icon-container-div">
+                                <a href="#" class="login-with login-with-fb">
+                                    <i class='fab fa-facebook-f' style="color: white"></i>
+                                    Login with facebook
+                                </a>
+                                <a href="#" class="login-with login-with-google">
+                                    <i class='fab fa-google' style="color: white"></i>
+                                    Login with Google
+                                </a>
+                            </div>
+                            <h4>Don't have account?</h4>
+                            <a asp-controller="account" asp-action="Register" class="register-btn">Register Now</a>
+                        </div>
+                    }
+                }
+
+            </div>
+            <div class="cart-icon">
+                <a asp-controller="ShoppingCart" asp-action="ViewCart" asp-route-uid="@ViewBag.uid"> <i class='fas fa-shopping-cart nav-icon'></i></a>
+                <div id="Cart">
+                    @(await Component.InvokeAsync("ShoppingItems"))
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div>
+        @RenderBody()
+    </div>
+
+
+
+    <footer class="page-footer font-small stylish-color-dark pt-4">
+
+        <!-- Footer Links -->
+        <div class="container text-center text-md-left">
+
+            <!-- Grid row -->
+            <div class="row">
+
+                <!-- Grid column -->
+                <div class="col-md-4 mx-auto">
+
+                    <!-- Content -->
+                    <h5 class="font-weight-bold text-uppercase mt-3 mb-4">
+                        Shoppy
+                        <img src="~/images/assets/online-shopping.png" class="footer-bag" />
+                    </h5>
+                    <p>
+                        Address: Beirut, Lebanon. <br />
+                        Phone: +xxx xxx xxx <br />
+                        Email: email@example.com
+                    </p>
+
+                </div>
+                <!-- Grid column -->
+
+                <hr class="clearfix w-100 d-md-none">
+
+                <!-- Grid column -->
+                <div class="col-md-2 mx-auto">
+
+                    <!-- Links -->
+                    <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Home</a>
+                        </li>
+                        <li>
+                            <a href="#!">Products</a>
+                        </li>
+                        <li>
+                            <a href="#!">About</a>
+                        </li>
+                        <li>
+                            <a href="#!">Contact</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
+
+        </div>
+        <!-- Footer Links -->
+
+        <hr>
+
+        <!-- Call to action -->
+        <ul class="list-unstyled list-inline text-center py-2">
+            <li class="list-inline-item">
+                <h5 class="mb-1">Register for free</h5>
+            </li>
+            <li class="list-inline-item">
+                <a href="#!" class="btn btn-danger btn-rounded">Sign up!</a>
+            </li>
+        </ul>
+        <!-- Call to action -->
+
+        <hr>
+
+        <!-- Social buttons -->
+        <ul class="list-unstyled list-inline text-center">
+            <li class="list-inline-item">
+                <a class="btn-floating btn-fb mx-1">
+                    <i class="fab fa-facebook-f"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-tw mx-1">
+                    <i class="fab fa-twitter"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-gplus mx-1">
+                    <i class="fab fa-google-plus-g"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-li mx-1">
+                    <i class="fab fa-linkedin-in"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn-floating btn-dribbble mx-1">
+                    <i class='fab fa-instagram'></i>
+                </a>
+            </li>
+        </ul>
+        <!-- Social buttons -->
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">
+            <a href="#">Shoppy</a> | 2020 &copy; All Right Reserved.
+        </div>
+        <!-- Copyright -->
+
+    </footer>
+
+
+    @RenderSection("scripts", required: false)
+
+
+    <script src="~/js/app.js"></script>
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
+
+
+
+
+</body>
+</html>

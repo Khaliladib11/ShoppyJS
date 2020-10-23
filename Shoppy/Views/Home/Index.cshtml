@@ -1,0 +1,126 @@
+﻿@model HomeViewModel
+
+<partial name="~/Views/Shared/LandingPage.cshtml" />
+
+<div class="home-categories-section">
+    <div class="home_categories">
+        <h2>Categories</h2>
+        <h4>Shop By Category</h4>
+        <div class="row">
+            @{
+                foreach (var Category in Model.categories)
+                {
+                    <a asp-controller="home" asp-action="Categories" asp-route-category="@Category.CategoryName">
+                        <div class="home_category">
+                            <div>
+                                <img class="home_category_img" asp-append-version="true" src="images/assets/categories/@Category.CategoryImage" alt="Alternate Text" />
+                            </div>
+                            <a href="#">@Category.CategoryName</a>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="home_separator">
+    <div>
+        <h3>What Are You Waiting For?</h3>
+        <h4>Sign up and Don't be Late</h4>
+        <a asp-controller="account" asp-action="Register">SignUp</a>
+    </div>
+</div>
+
+<div class="products-container">
+    <h2>New Products</h2>
+    <h4>Recently added to the shop</h4>
+    <div class="row">
+        @{
+            foreach (var Product in Model.newProducts)
+            {
+                <div class="product-container">
+                    <div>
+                        <a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid"><img src="@Product.CoverImage" alt="Alternate Text" asp-append-version="true" class="product-container_img" /></a>
+                    </div>
+                    @*<form asp-controller="shoppingCart" asp-action="AddToCart"  method="post" data-ajax="true" data-ajax-complete="addToCartUsignAjax(@Product.Pid)">
+                        <input type="text" name="pid" value="@Product.Pid" class="hiddinField"/>
+                        <button  class="product_btn" type="submit">Add To Cart</button>
+                    </form>*@
+                    @*<input type="button" name="add" value="Add To Cart" class="addToCart_btn" onclick="addToCartUsignAjax(@Product.Pid)" />*@
+                    <button class="addToCart_btn" onclick="addToCartUsignAjax(@Product.Pid)">
+                        <span id="text_btn-@Product.Pid">Add To Cart</span>
+                        <div class="spinner-border" role="status" style="display: none" id="loader-@Product.Pid">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </button>
+                    <div class="product-details">
+                        <div class="product-category">
+                            @{
+                                foreach (var category in Product.Categories)
+                                {
+                                    <a asp-controller="home" asp-action="Categories" asp-route-category="@category.CategoryName">@category.CategoryName</a>
+                                }
+
+                            }
+                        </div>
+                        <div class="product-name"><a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid">@Product.ProductName</a></div>
+                        <div class="product-price">$@Product.ProductPrice</div>
+                        <div class="rating">
+                            @{
+                                int count = 0;
+                                for (int i = 0; i < Product.ProductRate; i++)
+                                {
+                                    <i class='fas fa-star'></i>
+                                    count = count + 1;
+                                }
+                                for (int j = count; j < 5; j++)
+                                {
+                                    <i class='far fa-star'></i>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+<partial name="~/Views/Shared/shipping_payment.cshtml" />
+
+@section scripts{ 
+    <script>
+    function addToCartUsignAjax(pid) {
+        $.ajax({
+           type: "GET",
+            url: "/shoppingCart/AddToCart",
+            data: { "pid": pid },
+            beforeSend: function () {
+                $("#loader-"+pid).show();
+                $("#text_btn-"+pid).hide();
+            },
+            success: function (response) {
+                if (response.result == "Redirect") {
+                    window.location.href = response.url;
+                } else if (response.result == "Success") {
+                    alert("Added Successfully");
+                    $("#Cart").load('/shoppingCart/updateCart');
+                }
+            },
+            complete: function () {
+                $("#loader-" + pid).hide();
+                $("#text_btn-" + pid).show();
+            },
+            failure: function (response) {
+                alert(response);
+            },
+            error: function (response) {
+                alert(response);
+            }
+        });
+    }
+    </script>
+}
+
