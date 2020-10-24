@@ -790,7 +790,10 @@ footer {
    color: #f8981d;
    text-decoration: none;
 }
-.cart_container{
+#delete_svg{
+    cursor: pointer;
+}
+.cart_container {
 }
 .cart_container_products {
     max-height: 310px;

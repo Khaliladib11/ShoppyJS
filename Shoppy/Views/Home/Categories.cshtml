@@ -105,13 +105,18 @@
                 {
                     <div class="product-container">
                         <a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid"><img src="@Product.CoverImage" alt="Alternate Text" asp-append-version="true" /></a>
-                        <button>Add To Cart</button>
+                        <button class="addToCart_btn" onclick="addToCartUsignAjax(@Product.Pid)">
+                            <span id="text_btn-@Product.Pid">Add To Cart</span>
+                            <div class="spinner-border" role="status" style="display: none" id="loader-@Product.Pid">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </button>
                         <div class="product-details">
                             <div class="product-category">
                                 @{
                                     foreach (var category in Product.Categories)
                                     {
-                                        <a href="#">@category.CategoryName,</a>
+                                        <a  asp-controller="home" asp-action="Categories" asp-route-category="@category.CategoryName">@category.CategoryName,</a>
                                     }
                                 }
                             </div>

@@ -62,13 +62,11 @@ namespace Shoppy.Controllers
 
         public IActionResult updateCart()
         {
-            ViewCartModelView viewCartModelView = new ViewCartModelView();
-            if (HttpContext.Session.GetString("username") != null)
-            {
-                int uid = (int)HttpContext.Session.GetInt32("uid");
-                viewCartModelView.ShoppingCartItem = _shoppingCartDbHandler.getShoppingItems(uid);
-            }
             return ViewComponent("ShoppingItems");
+        }
+        public IActionResult updateViewCart()
+        {
+            return ViewComponent("Cart");
         }
     }
 }
