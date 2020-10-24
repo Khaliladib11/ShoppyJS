@@ -219,5 +219,49 @@ namespace Shoppy.DataAccess
 
             }
         }
+
+        public List<Product> searchProduct(string search)
+        {
+            List<Product> products = new List<Product>();
+
+            try
+            {
+                DbConnection db = new DbConnection();
+                using (SqlConnection con = db.getConnection(_configuration))
+                {
+
+                    //string sql = "select p.* from product p, product_category pc, category c where p.pid = pc.pid and pc.cid = c.cid and c.categoryName = '"+ category + "' and p.productName LIKE '%"+ searchProduct + "%' and p.price >= "+ min +" and p.price <= " + max;
+                    SqlCommand cmd = new SqlCommand("searchProduct", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@search", search);
+                    SqlDataAdapter sd = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+
+                    con.Open();
+                    sd.Fill(dt);
+                    con.Close();
+                    _categoryDbHandler = new CategoryDbHandler(_configuration);
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        products.Add(
+                            new Product
+                            {
+                                Pid = Convert.ToInt32(dr["pid"]),
+                                ProductName = Convert.ToString(dr["productName"]),
+                                ProductDesc = Convert.ToString(dr["productDesc"]),
+                                CoverImage = Convert.ToString(dr["coverImg"]),
+                                ProductPrice = float.Parse(dr["price"].ToString()),
+                                ProductRate = float.Parse(dr["rate"].ToString()),
+                                Categories = _categoryDbHandler.getCategorysList(Convert.ToInt32(dr["pid"])),
+                            });
+                    }
+                    return products;
+                }
+            }
+            catch
+            {
+                return products;
+            }
+        }
     }
 }

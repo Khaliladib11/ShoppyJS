@@ -107,6 +107,29 @@ namespace Shoppy.Controllers
             return View(categoryViewModel);
         }
 
+        [HttpPost]
+        public IActionResult SearchProduct(string search)
+        {
+            List<Product> products = _productDb.searchProduct(search);
+            CategoryViewModel categoryViewModel = new CategoryViewModel
+            {
+                Products = products,
+                Category = "All",
+                Categories = _categoryDbHandler.getAllCategories(),
+                Search = search,
+                MinPrice = 0,
+                MaxPrice = 800,
+                SortByList = new List<string>()
+                {
+                    "Latest",
+                    "Rate",
+                    "Price High To Low",
+                    "Price Low To High",
+                },
+                SortBy = "Latest",
+            };
+            return View("Categories", categoryViewModel);
+        }
         public IActionResult AddToCart()
         {
             if (HttpContext.Session.GetString("username") == null)
