@@ -26,8 +26,8 @@ namespace Shoppy.DataAccess
                 DbConnection db = new DbConnection();
                 using (SqlConnection con = db.getConnection(_configuration))
                 {
-                    string sql = "select c.categoryName, c.cid, c.categoryImage from category c";
-                    SqlCommand cmd = new SqlCommand(sql, con);
+                    SqlCommand cmd = new SqlCommand("getAllCategories", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sd = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     con.Open();
@@ -59,8 +59,9 @@ namespace Shoppy.DataAccess
                 DbConnection db = new DbConnection();
                 using (SqlConnection con = db.getConnection(_configuration))
                 {
-                    string sql = "select c.categoryName, c.cid from category c, product p, product_category pc where c.cid = pc.cid and p.pid = pc.pid and p.pid = " + pid;
-                    SqlCommand cmd = new SqlCommand(sql, con);
+                    SqlCommand cmd = new SqlCommand("getCategoryList", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@pid", pid);
                     SqlDataAdapter sd = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     con.Open();

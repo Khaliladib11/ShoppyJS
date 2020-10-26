@@ -22,6 +22,13 @@ namespace Shoppy.DataAccess
             _configuration = configuration;
         }
 
+        public List<string> SplitArray(string bigString)
+        {
+            string[] arr = bigString.Split(",");
+            List<string> ListString = arr.ToList();
+            return ListString;
+        }
+
         public List<Product> getAllProducts()
         {
             List<Product> products = new List<Product>();
@@ -30,8 +37,8 @@ namespace Shoppy.DataAccess
                 DbConnection db = new DbConnection();
                 using (SqlConnection con = db.getConnection(_configuration))
                 {
-                    string sql = "select * from product";
-                    SqlCommand cmd = new SqlCommand(sql, con);
+                    SqlCommand cmd = new SqlCommand("getAllProducts", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sd = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     con.Open();
@@ -42,13 +49,13 @@ namespace Shoppy.DataAccess
                     {
                         products.Add(new Product { 
                             
-                            Pid = Convert.ToInt32(dr["pid"]),
-                            ProductName = Convert.ToString(dr["productName"]),
-                            ProductDesc = Convert.ToString(dr["productDesc"]),
-                            CoverImage = Convert.ToString(dr["coverImg"]),
+                            Pid = Convert.ToInt32(dr["id"]),
+                            ProductName = Convert.ToString(dr["name"]),
+                            ProductDesc = Convert.ToString(dr["description"]),
+                            CoverImage = Convert.ToString(dr["Image"]),
                             ProductPrice = float.Parse(dr["price"].ToString()),
                             ProductRate = float.Parse(dr["rate"].ToString()),
-                            Categories = _categoryDbHandler.getCategorysList(Convert.ToInt32(dr["pid"])),
+                            Categories = SplitArray(dr["Categories"].ToString()),
 
                         });
                     }
@@ -69,9 +76,9 @@ namespace Shoppy.DataAccess
                 DbConnection db = new DbConnection();
                 using (SqlConnection con = db.getConnection(_configuration))
                 {
-
-                    string sql = "select pid, productname, productDesc, coverImg, price, discount, rate, catgorys = (SELECT  STUFF((SELECT ',' + c.categoryName FROM category as c, product_category as pc WHERE  c.cid = pc.cid and pc.pid = pcc.pid FOR XML PATH('')), 1, 1, '') FROM category as cc, product_category as pcc WHERE cc.cid = pcc.cid and pcc.pid = p.pid GROUP BY pid) from product as p where p.pid = "+ id;
-                    SqlCommand cmd = new SqlCommand(sql, con);
+                    SqlCommand cmd = new SqlCommand("getProductByID", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@pid", id);
                     SqlDataAdapter sd = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
 
@@ -81,12 +88,12 @@ namespace Shoppy.DataAccess
                     _categoryDbHandler = new CategoryDbHandler(_configuration);
                     foreach (DataRow dr in dt.Rows)
                     {
-                        product.Pid = Int32.Parse(dr["pid"].ToString());
-                        product.ProductName = dr["productName"].ToString();
-                        product.ProductDesc = dr["productDesc"].ToString();
+                        product.Pid = Int32.Parse(dr["id"].ToString());
+                        product.ProductName = dr["name"].ToString();
+                        product.ProductDesc = dr["description"].ToString();
                         product.ProductPrice = float.Parse(dr["price"].ToString());
-                        product.CoverImage = dr["coverImg"].ToString();
-                        product.Categories = _categoryDbHandler.getCategorysList(Convert.ToInt32(dr["pid"]));
+                        product.CoverImage = dr["image"].ToString();
+                        product.Categories = SplitArray(dr["Categories"].ToString());
                         product.ProductRate = float.Parse(dr["rate"].ToString());
                     }
                     return product;
@@ -126,7 +133,7 @@ namespace Shoppy.DataAccess
                                 ProductDesc = dr["productDesc"].ToString(),
                                 ProductPrice = float.Parse(dr["price"].ToString()),
                                 CoverImage = dr["coverImg"].ToString(),
-                                Categories = _categoryDbHandler.getCategorysList(Convert.ToInt32(dr["pid"])),
+                                Categories = SplitArray(dr["Categories"].ToString()),
                                 ProductRate = float.Parse(dr["rate"].ToString()),
                             });
                     }
@@ -139,7 +146,7 @@ namespace Shoppy.DataAccess
             }
         }
 
-        public List<Product> getProductsByCategory(string category, string searchProduct, int min, int max, string sortBy)
+        public List<Product> getProductsByCategory(string category, string searchProduct, int min, int max, string sortBy, int start, int rowNumber)
         {
             List<Product> products = new List<Product>();
 
@@ -157,6 +164,8 @@ namespace Shoppy.DataAccess
                     cmd.Parameters.AddWithValue("@minPrice", min);
                     cmd.Parameters.AddWithValue("@maxPrice", max);
                     cmd.Parameters.AddWithValue("@sortBy", sortBy);
+                    cmd.Parameters.AddWithValue("@start", start);
+                    cmd.Parameters.AddWithValue("@rowNumber", rowNumber);
                     SqlDataAdapter sd = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
 
@@ -175,7 +184,7 @@ namespace Shoppy.DataAccess
                                 CoverImage = Convert.ToString(dr["coverImg"]),
                                 ProductPrice = float.Parse(dr["price"].ToString()),
                                 ProductRate = float.Parse(dr["rate"].ToString()),
-                                Categories = _categoryDbHandler.getCategorysList(Convert.ToInt32(dr["pid"])),
+                                Categories = SplitArray(dr["Categories"].ToString()),
                             });
                     }
                     return products;
@@ -187,6 +196,33 @@ namespace Shoppy.DataAccess
             }
 
         }
+
+
+        public int getProductsByCategoryTotal(string category, string searchProduct, int min, int max)
+        {
+            DbConnection db = new DbConnection();
+            using SqlConnection con = db.getConnection(_configuration);
+
+            //string sql = "select p.* from product p, product_category pc, category c where p.pid = pc.pid and pc.cid = c.cid and c.categoryName = '"+ category + "' and p.productName LIKE '%"+ searchProduct + "%' and p.price >= "+ min +" and p.price <= " + max;
+            SqlCommand cmd = new SqlCommand("getFilterProductsTotal", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@category", category);
+            cmd.Parameters.AddWithValue("@search", searchProduct);
+            cmd.Parameters.AddWithValue("@minPrice", min);
+            cmd.Parameters.AddWithValue("@maxPrice", max);
+            cmd.Parameters.Add("@result", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.ReturnValue;
+
+            SqlDataAdapter sd = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+
+            int result = (int)cmd.Parameters["@result"].Value;
+
+            return result;
+        }
+
 
         public bool checkProduct(int pid)
         {
@@ -252,7 +288,7 @@ namespace Shoppy.DataAccess
                                 CoverImage = Convert.ToString(dr["coverImg"]),
                                 ProductPrice = float.Parse(dr["price"].ToString()),
                                 ProductRate = float.Parse(dr["rate"].ToString()),
-                                Categories = _categoryDbHandler.getCategorysList(Convert.ToInt32(dr["pid"])),
+                                Categories = SplitArray(dr["Categories"].ToString()),
                             });
                     }
                     return products;

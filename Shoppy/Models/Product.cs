@@ -10,10 +10,12 @@ namespace Shoppy.Models
         public int Pid { get; set; }
         public string ProductName { get; set; }
         public string ProductDesc { get; set; }
-        public List<Category> Categories { get; set; }
+        public List<string> Categories { get; set; }
         public string CoverImage { get; set; }
         public float ProductPrice { get; set; }
         public float ProductRate { get; set; }
         public int ProductDiscount { get; set; }
+        public List<string> Colors { get; set; }
+        public List<string> Sizes { get; set; }
     }
 }

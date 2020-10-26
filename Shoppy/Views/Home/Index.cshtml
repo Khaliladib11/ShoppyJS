@@ -59,12 +59,14 @@
                             @{
                                 foreach (var category in Product.Categories)
                                 {
-                                    <a asp-controller="home" asp-action="Categories" asp-route-category="@category.CategoryName">@category.CategoryName</a>
+                                    <a asp-controller="home" asp-action="Categories" asp-route-category="@category">@category</a>
                                 }
 
                             }
                         </div>
-                        <div class="product-name"><a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid">@Product.ProductName</a></div>
+                        <div class="product-name">
+                            <a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid">@Product.ProductName</a>
+                        </div>
                         <div class="product-price">$@Product.ProductPrice</div>
                         <div class="rating">
                             @{

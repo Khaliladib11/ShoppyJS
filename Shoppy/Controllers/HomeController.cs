@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -79,13 +80,21 @@ namespace Shoppy.Controllers
         }
 
         [HttpGet][HttpPost]
-        public ViewResult Categories(string category, string searchProduct, int?  min_range, int? max_range, string sortBy)
+        public ViewResult Categories(string category, string searchProduct, int?  min_range, int? max_range, string sortBy, int? page)
         {
+            page = page.HasValue ? page : 1;
             min_range = min_range.HasValue ? min_range : 0;
             max_range = max_range.HasValue ? max_range : 800;
             searchProduct = string.IsNullOrEmpty(searchProduct) ? "" : searchProduct;
             sortBy = string.IsNullOrEmpty(sortBy) ? "Latest" : sortBy;
-            List<Product> pro = _productDb.getProductsByCategory(category, searchProduct, (int)min_range, (int)max_range, sortBy);
+
+            int rowNumber = 2;
+            int start = (int)((page * rowNumber) - rowNumber);
+            int totalProducts = _productDb.getProductsByCategoryTotal(category, searchProduct, (int)min_range, (int)max_range);
+            double totalPages = Math.Round( ((double)totalProducts / rowNumber), MidpointRounding.ToPositiveInfinity);
+            
+
+            List<Product> pro = _productDb.getProductsByCategory(category, searchProduct, (int)min_range, (int)max_range, sortBy, start, rowNumber);
             CategoryViewModel categoryViewModel = new CategoryViewModel
             {
                 Products = pro,
@@ -102,14 +111,22 @@ namespace Shoppy.Controllers
                     "Price Low To High",
                 },
                 SortBy = sortBy,
+                Page = (int)page,
+                TotalPages = (int)totalPages
             };
 
             return View(categoryViewModel);
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult SearchProduct(string search)
         {
+            int page = 1;
+            int rowNumber = 2;
+            int start = (int)((page * rowNumber) - rowNumber);
+            int totalProducts = _productDb.getProductsByCategoryTotal("all", search, 0, 800);
+            double totalPages = Math.Round(((double)totalProducts / rowNumber), MidpointRounding.ToPositiveInfinity);
+
             List<Product> products = _productDb.searchProduct(search);
             CategoryViewModel categoryViewModel = new CategoryViewModel
             {
@@ -127,6 +144,8 @@ namespace Shoppy.Controllers
                     "Price Low To High",
                 },
                 SortBy = "Latest",
+                Page = (int)page,
+                TotalPages = (int)totalPages
             };
             return View("Categories", categoryViewModel);
         }

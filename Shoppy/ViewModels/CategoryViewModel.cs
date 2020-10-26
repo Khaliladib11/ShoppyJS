@@ -17,5 +17,9 @@ namespace Shoppy.ViewModels
         public int MaxPrice { get; set; }
         public string SortBy { get; set; }
         public List<string> SortByList { get; set; }
+
+        public int Page { get; set; }
+        public int TotalPages { get; set; }
+
     }
 }

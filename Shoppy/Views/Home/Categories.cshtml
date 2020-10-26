@@ -14,7 +14,7 @@
     </div>
 
     <div class="product-filter">
-        <form method="post">
+        <form method="get" asp-controller="home" asp-action="Categories">
             <div>
                 <label><b>Category:</b></label>
                 <select name="category" class="form-select">
@@ -116,7 +116,7 @@
                                 @{
                                     foreach (var category in Product.Categories)
                                     {
-                                        <a  asp-controller="home" asp-action="Categories" asp-route-category="@category.CategoryName">@category.CategoryName,</a>
+                                        <a asp-controller="home" asp-action="Categories" asp-route-category="@category">@category</a>
                                     }
                                 }
                             </div>
@@ -143,8 +143,60 @@
         </div>
     </div>
 
-</section>
+    <div class="product-pagination">
+        @{
+            if (Model.TotalPages < 10)
+            {
+                for (int i = 1; i < Model.TotalPages + 1; i++)
+                {
+                    if (Model.Page == i)
+                    {
+                        <a asp-controller="home" asp-action="Categories" asp-route-category="@Model.Category" asp-route-searchProduct="@Model.Search" asp-route-min_range="@Model.MinPrice" asp-route-max_range="@Model.MaxPrice" asp-route-sortBy="@Model.SortBy" asp-route-page="@i" class="product-pagination-link-active">
+                            @i
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="home" asp-action="Categories" asp-route-category="@Model.Category" asp-route-searchProduct="@Model.Search" asp-route-min_range="@Model.MinPrice" asp-route-max_range="@Model.MaxPrice" asp-route-sortBy="@Model.SortBy" asp-route-page="@i">
+                            @i
+                        </a>
+                    }
+                }
+            }
+            else
+            {
+                if (Model.Page > 10)
+                {
+                    <a asp-controller="home" asp-action="Categories" asp-route-category="@Model.Category" asp-route-searchProduct="@Model.Search" asp-route-min_range="@Model.MinPrice" asp-route-max_range="@Model.MaxPrice" asp-route-sortBy="@Model.SortBy" asp-route-page="( ( 10 * (Model.Page / 10) ) - 10)">
+                        ...
+                    </a>
+                }
+                for (int i = (10 * (Model.Page / 10)); i < Model.TotalPages + 1; i++)
+                {
+                    if (Model.Page == i)
+                    {
+                        <a asp-controller="home" asp-action="Categories" asp-route-category="@Model.Category" asp-route-searchProduct="@Model.Search" asp-route-min_range="@Model.MinPrice" asp-route-max_range="@Model.MaxPrice" asp-route-sortBy="@Model.SortBy" asp-route-page="@i" class="product-pagination-link-active">
+                            @i
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="home" asp-action="Categories" asp-route-category="@Model.Category" asp-route-searchProduct="@Model.Search" asp-route-min_range="@Model.MinPrice" asp-route-max_range="@Model.MaxPrice" asp-route-sortBy="@Model.SortBy" asp-route-page="@i">
+                            @i
+                        </a>
+                    }
+                }
+                if ((10 * (Model.Page / 10)) + 10 < Model.TotalPages)
+                {
+                    <a asp-controller="home" asp-action="Categories" asp-route-category="@Model.Category" asp-route-searchProduct="@Model.Search" asp-route-min_range="@Model.MinPrice" asp-route-max_range="@Model.MaxPrice" asp-route-sortBy="@Model.SortBy" asp-route-page="( ( 10 * (Model.Page / 10) ) + 10)">
+                        ...
+                    </a>
+                }
+            }
+        }
+    </div>
 
+</section>
 
 
 @section Scripts{

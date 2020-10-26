@@ -882,6 +882,27 @@ footer {
 .cart_container_product svg:hover {
     fill: black;
 }
+.product-pagination{
+    font-size: 15px;
+    padding: 10px;
+}
+.product-pagination a {
+    margin: 5px;
+    padding: 5px 10px;
+    color: #333333;
+    border-radius: 5px;
+    transition: all 0.2s ease-in;
+    text-align: center;
+}
+.product-pagination a:hover {
+    background-color: #f9a639;
+    color: white;
+    text-decoration: none;
+}
+.product-pagination-link-active {
+    background-color: #f8981d !important;
+    color: white !important;
+}
 /*Responsive Layout*/
 @media screen and (max-width: 1024px) {
     .navigation-bar {

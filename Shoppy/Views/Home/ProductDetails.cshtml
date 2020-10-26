@@ -17,12 +17,12 @@
             {
                 if (productListCount == 0)
                 {
-                    <a asp-controller="home" asp-action="Categories" asp-route-category="@category.CategoryName">@category.CategoryName</a>
+                    <a asp-controller="home" asp-action="Categories" asp-route-category="@category">@category</a>
                     productListCount++;
                 }
                 else
                 {
-                    <p>,&ensp;</p><a asp-controller="home" asp-action="Categories" asp-route-category="@category.CategoryName">@category.CategoryName</a>
+                    <p>,&ensp;</p><a asp-controller="home" asp-action="Categories" asp-route-category="@category">@category</a>
                 }
 
             }
