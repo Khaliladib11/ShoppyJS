@@ -48,12 +48,10 @@
                         <button  class="product_btn" type="submit">Add To Cart</button>
                     </form>*@
                     @*<input type="button" name="add" value="Add To Cart" class="addToCart_btn" onclick="addToCartUsignAjax(@Product.Pid)" />*@
-                    <button class="addToCart_btn" onclick="addToCartUsignAjax(@Product.Pid)">
+                    @*<button class="addToCart_btn" asp-action="ProductDetails" asp-controller="home" asp-route-pid="@Product.Pid">
                         <span id="text_btn-@Product.Pid">Add To Cart</span>
-                        <div class="spinner-border" role="status" style="display: none" id="loader-@Product.Pid">
-                            <span class="sr-only">Loading...</span>
-                        </div>
                     </button>
+                    <a href="#">content</a>*@
                     <div class="product-details">
                         <div class="product-category">
                             @{
@@ -91,38 +89,4 @@
 
 
 <partial name="~/Views/Shared/shipping_payment.cshtml" />
-
-@section scripts{ 
-    <script>
-    function addToCartUsignAjax(pid) {
-        $.ajax({
-           type: "GET",
-            url: "/shoppingCart/AddToCart",
-            data: { "pid": pid },
-            beforeSend: function () {
-                $("#loader-"+pid).show();
-                $("#text_btn-"+pid).hide();
-            },
-            success: function (response) {
-                if (response.result == "Redirect") {
-                    window.location.href = response.url;
-                } else if (response.result == "Success") {
-                    alert("Added Successfully");
-                    $("#Cart").load('/shoppingCart/updateCart');
-                }
-            },
-            complete: function () {
-                $("#loader-" + pid).hide();
-                $("#text_btn-" + pid).show();
-            },
-            failure: function (response) {
-                alert(response);
-            },
-            error: function (response) {
-                alert(response);
-            }
-        });
-    }
-    </script>
-}
 

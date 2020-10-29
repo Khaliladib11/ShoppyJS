@@ -15,7 +15,5 @@ namespace Shoppy.Models
         public float ProductPrice { get; set; }
         public float ProductRate { get; set; }
         public int ProductDiscount { get; set; }
-        public List<string> Colors { get; set; }
-        public List<string> Sizes { get; set; }
     }
 }

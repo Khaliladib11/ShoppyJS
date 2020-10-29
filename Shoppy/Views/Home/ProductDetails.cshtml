@@ -2,7 +2,7 @@
 
 
 @{
-    ViewBag.Title = Model.product.ProductName;
+    ViewBag.Title = Model.product.ProductName + " | Shoppy ";
 }
 
 <section class="product-section">
@@ -38,7 +38,7 @@
             <div class="rating">
                 @{
                     int count = 0;
-                    for (int i = 0; i < Model.product.ProductRate; i++)
+                    for (int k = 0; k < Model.product.ProductRate; k++)
                     {
                         <i class='fas fa-star'></i>
                         count = count + 1;
@@ -51,54 +51,68 @@
             </div>
             <div class="product-price product-section-info-price">$@Model.product.ProductPrice</div>
             <p style="color: #666666">@Model.product.ProductDesc</p>
-            <div class="product-section-info-quantity">
-                <i class='fas fa-minus' id="sub-icon"></i>
-                <span id="number">0</span>
-                <i class='fas fa-plus' id="plus-icon"></i>
+            <div class="product-section_Specification_radio_button">
+                <label class="product_label">
+                    Color:
+                </label>
+                @{
+                    foreach (var color in Model.Colors)
+                    {
+                        <label class="radioBtn">
+                            <input type="radio" name="radio" value="@color.colorId" class="radio_btn" onclick="getSizes(@color.colorId)" />
+                            <span class="checkmark" style="background-color: @color.colorCode"></span>
+                        </label>
+                    }
+                }
+                <input type="text" id="colorField" asp-for="Color" class="hiddinField" value="0" />
             </div>
-            <a href="#" class="product-section-info-cart">
-                Add To Cart
-                <i class='fas fa-shopping-cart '></i>
-            </a>
+
+            <div class="product-section_Specification_size">
+                <label class="product_label">Size:</label>
+                <select asp-for="Size" id="sizeSelect" onchange="getQuantity()">
+
+                    @{
+                        if (Model.Sizes != null)
+                        {
+                            foreach (var size in Model.Sizes)
+                            {
+                                <option value="@size.sizeId">@size.size</option>
+                            }
+                        }
+                    }
+                </select>
+
+            </div>
+
+            <input type="text" name="quantityAvailble" id="quantityAvailble" class="hiddinField" />
+            <input type="text" name="productId" value="@Model.product.Pid" id="productId" class="hiddinField" />
+
+            <div class="product-section_Specification_quantity">
+                <label class="product_label">Quantity: </label>
+                <input type="text" asp-for="Quantity" id="quantity_product" class="hiddinField" value="1" />
+                <div class="product-section-info-quantity">
+                    <i class='fas fa-minus' id="sub-icon"></i>
+                    <span id="number">0</span>
+                    <i class='fas fa-plus' id="plus-icon"></i>
+                </div>
+            </div>
+
+            <div class="addToCart_validation_select">You have to choise color & size first</div>
+            <div class="addToCart_validation_quantity">We don't have enough quantity</div>
+
+            <button class="product-section-info-cart" onclick="addToCart()">
+                <div id="addToCart_btn">
+                    Add To Cart
+                    <i class='fas fa-shopping-cart'></i>
+                </div>
+                <div class="spinner-border" role="status" style="display: none" id="loader">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </button>
         </div>
     </div>
 </section>
 
-
-@*<div class="related-product products-container">
-    <h2>Related Product</h2>
-    <h4>Recently added our shop</h4>
-    <div class="row">
-        @{
-            foreach (var Product in Model.relatedProdcut)
-            {
-                <div class="product-container">
-                    <a asp-controller="home" asp-action="ProductDetails" asp-route-pid="@Product.Pid" asp-route-category="@Product.Categories"><img src="@Product.CoverImage" alt="Alternate Text" asp-append-version="true" /></a>
-                    <button>Add To Cart</button>
-                    <div class="product-details">
-                        <div class="product-category"><a href="#">@Product.Categories</a></div>
-                        <div class="product-name"><a href="#">@Product.ProductName</a></div>
-                        <div class="product-price">$@Product.ProductPrice</div>
-                        <div class="rating">
-                            @{
-                                count = 0;
-                                for (int i = 0; i < @Product.ProductRate; i++)
-                                {
-                                    <i class='fas fa-star'></i>
-                                    count = count + 1;
-                                }
-                                for (int j = count; j < 5; j++)
-                                {
-                                    <i class='far fa-star'></i>
-                                }
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-    </div>
-</div>*@
 
 @section Scripts{
     <script src="~/js/IncDec.js"></script>

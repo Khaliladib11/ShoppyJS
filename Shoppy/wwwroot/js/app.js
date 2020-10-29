@@ -315,15 +315,3 @@ loginBtnHome.addEventListener('click', () => {
 });
 
 
-
-function User(email = null, name = null) {
-    this.email = email;
-};
-Object.defineProperty(User, "constructor", {
-    configurable: false,
-    enumerable: false,
-    value: User
-});
-User.prototype.build = function (selector) {
-    
-};

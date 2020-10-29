@@ -20,6 +20,7 @@
             <tr>
                 <th>Image</th>
                 <th>Product</th>
+                <th>Specification</th>
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total</th>
@@ -38,6 +39,7 @@
                     <tr>
                         <td><img src="@shopItem.productImg" alt="Alternate Text" asp-append-version="true" class="viewCart_section_table_img" /></td>
                         <td>@shopItem.productName</td>
+                        <td>color: @shopItem.color , Size: @shopItem.size</td>
                         <td>@shopItem.productPrice</td>
                         <td>@shopItem.quantity</td>
                         <td>@total</td>

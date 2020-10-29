@@ -47,8 +47,9 @@ namespace Shoppy.DataAccess
                     _categoryDbHandler = new CategoryDbHandler(_configuration);
                     foreach (DataRow dr in dt.Rows)
                     {
-                        products.Add(new Product { 
-                            
+                        products.Add(new Product
+                        {
+
                             Pid = Convert.ToInt32(dr["id"]),
                             ProductName = Convert.ToString(dr["name"]),
                             ProductDesc = Convert.ToString(dr["description"]),
@@ -60,12 +61,91 @@ namespace Shoppy.DataAccess
                         });
                     }
                 }
-                    return products;
+                return products;
             }
             catch
             {
                 return products;
             }
+        }
+
+        public List<Size> getProductSize(int pid)
+        {
+            List<Size> Sizes = new List<Size>();
+            DbConnection db = new DbConnection();
+            SqlConnection con = db.getConnection(_configuration);
+            SqlCommand cmd = new SqlCommand("getProductsizeByID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@pid", pid);
+            SqlDataAdapter sd = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            _categoryDbHandler = new CategoryDbHandler(_configuration);
+            foreach (DataRow dr in dt.Rows)
+            {
+                Sizes.Add(new Size()
+                {
+                    sizeId = Int32.Parse(dr["sid"].ToString()),
+                    size = dr["size"].ToString(),
+                });
+            }
+            return Sizes;
+        }
+
+        public List<Color> getProductColor(int pid)
+        {
+            List<Color> Colors = new List<Color>();
+            DbConnection db = new DbConnection();
+            SqlConnection con = db.getConnection(_configuration);
+            SqlCommand cmd = new SqlCommand("getProductColorByid", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@pid", pid);
+            SqlDataAdapter sd = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            _categoryDbHandler = new CategoryDbHandler(_configuration);
+            foreach (DataRow dr in dt.Rows)
+            {
+                Colors.Add(new Color()
+                {
+                    colorId = Int32.Parse(dr["id"].ToString()),
+                    colorCode = dr["color"].ToString(),
+                });
+            }
+            return Colors;
+        }
+
+        public List<Size> getProductSize(int pid, int color)
+        {
+            List<Size> Sizes = new List<Size>();
+            DbConnection db = new DbConnection();
+            SqlConnection con = db.getConnection(_configuration);
+            SqlCommand cmd = new SqlCommand("getProductSizeByColor", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@pid", pid);
+            cmd.Parameters.AddWithValue("@color", color);
+            SqlDataAdapter sd = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            _categoryDbHandler = new CategoryDbHandler(_configuration);
+            foreach (DataRow dr in dt.Rows)
+            {
+                Sizes.Add(new Size()
+                {
+                    sizeId = Int32.Parse(dr["sid"].ToString()),
+                    size = dr["size"].ToString(),
+                });
+            }
+            return Sizes;
         }
 
         public Product getProductById(int id)
@@ -74,30 +154,28 @@ namespace Shoppy.DataAccess
             try
             {
                 DbConnection db = new DbConnection();
-                using (SqlConnection con = db.getConnection(_configuration))
-                {
-                    SqlCommand cmd = new SqlCommand("getProductByID", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@pid", id);
-                    SqlDataAdapter sd = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
+                SqlConnection con = db.getConnection(_configuration);
+                SqlCommand cmd = new SqlCommand("getProductByID", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@pid", id);
+                SqlDataAdapter sd = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
 
-                    con.Open();
-                    sd.Fill(dt);
-                    con.Close();
-                    _categoryDbHandler = new CategoryDbHandler(_configuration);
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        product.Pid = Int32.Parse(dr["id"].ToString());
-                        product.ProductName = dr["name"].ToString();
-                        product.ProductDesc = dr["description"].ToString();
-                        product.ProductPrice = float.Parse(dr["price"].ToString());
-                        product.CoverImage = dr["image"].ToString();
-                        product.Categories = SplitArray(dr["Categories"].ToString());
-                        product.ProductRate = float.Parse(dr["rate"].ToString());
-                    }
-                    return product;
+                con.Open();
+                sd.Fill(dt);
+                con.Close();
+                _categoryDbHandler = new CategoryDbHandler(_configuration);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    product.Pid = Int32.Parse(dr["id"].ToString());
+                    product.ProductName = dr["name"].ToString();
+                    product.ProductDesc = dr["description"].ToString();
+                    product.ProductPrice = float.Parse(dr["price"].ToString());
+                    product.CoverImage = dr["image"].ToString();
+                    product.ProductRate = float.Parse(dr["rate"].ToString());
+                    product.Categories = SplitArray(dr["Categories"].ToString());
                 }
+                return product;
             }
             catch
             {
@@ -114,7 +192,7 @@ namespace Shoppy.DataAccess
                 using (SqlConnection con = db.getConnection(_configuration))
                 {
 
-                    string sql = "select pid, productName, productDesc, coverImg, price, categoryName, discount, rate from product, category where category.categoryName = '"+ category +"' and product.cid = category.cid;";
+                    string sql = "select pid, productName, productDesc, coverImg, price, categoryName, discount, rate from product, category where category.categoryName = '" + category + "' and product.cid = category.cid;";
                     SqlCommand cmd = new SqlCommand(sql, con);
                     SqlDataAdapter sd = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
@@ -298,6 +376,27 @@ namespace Shoppy.DataAccess
             {
                 return products;
             }
+        }
+
+        public int getProductQuantity(int pid, int sid, int cid)
+        {
+            DbConnection db = new DbConnection();
+            SqlConnection con = db.getConnection(_configuration);
+            SqlCommand cmd = new SqlCommand("getProductQuantity", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@pid", pid);
+            cmd.Parameters.AddWithValue("@sid", sid);
+            cmd.Parameters.AddWithValue("@coid", cid);
+            cmd.Parameters.Add("@quantity", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.ReturnValue;
+
+            SqlDataAdapter sd = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+
+            int quantity = (int)cmd.Parameters["@quantity"].Value;
+            return quantity;
         }
     }
 }

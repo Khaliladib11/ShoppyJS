@@ -17,7 +17,7 @@ namespace Shoppy.Controllers
         {
             _shoppingCartDbHandler = new ShoppingCartDbHandler(configuration);
         }
-        public JsonResult AddToCart(int pid, int? quantity)
+        public JsonResult AddToCart(int pid, int? quantity, int cid, int sid)
         {
             if (HttpContext.Session.GetString("username") == null)
             {
@@ -27,12 +27,12 @@ namespace Shoppy.Controllers
             int uid = (int)HttpContext.Session.GetInt32("uid");
             quantity = quantity.HasValue ? quantity : 1;
            
-            int result = _shoppingCartDbHandler.addToCart(pid, uid, (int)quantity);
+            int result = _shoppingCartDbHandler.addToCart(pid, uid, (int)quantity, cid, sid);
             if(result == 1)
             {
                 return Json(new { result = "Success" });
             }
-            return Json(new { result = "Redirect", url = Url.Action("Login", "account") });
+            return Json(new { result = "unsuccess" });
         }
 
         public IActionResult ViewCart(int uid)

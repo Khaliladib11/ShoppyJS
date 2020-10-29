@@ -9,6 +9,7 @@ using Shoppy.Models;
 using Shoppy.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
@@ -64,9 +65,11 @@ namespace Shoppy.Controllers
             bool checkProduct = _productDb.checkProduct(pid ?? 1);
             if (checkProduct == true)
             {
+                List<Color> colors = _productDb.getProductColor(pid ?? 1);
                 ProductDetailsModelView productDetailsModelView = new ProductDetailsModelView
                 {
-                    product = _productDb.getProductById(pid ?? 1)
+                    product = _productDb.getProductById(pid ?? 1),
+                    Colors = colors,
                 };
 
                 return View(productDetailsModelView);
@@ -77,6 +80,25 @@ namespace Shoppy.Controllers
                 return View("ProductNotFound");
             }
             
+        }
+        [HttpGet]
+        public JsonResult getProductSizesByColor(int pid, int color)
+        {
+            List<Size> sizes = _productDb.getProductSize(pid, color);
+            return Json(sizes);
+        }
+
+        [HttpGet]
+        public JsonResult getProductQuantity(int pid, int cid, int sid)
+        {
+            int qunatity = _productDb.getProductQuantity(pid, sid, cid);
+            return Json(qunatity);
+        }
+
+        [HttpPost]
+        public IActionResult ProductDetails(ProductDetailsModelView productDetailsModelView)
+        {
+            return Ok("Color: "+productDetailsModelView.Color + " " + "Size: " + productDetailsModelView.Size + " " + "Quantity: " + productDetailsModelView.Quantity);
         }
 
         [HttpGet][HttpPost]

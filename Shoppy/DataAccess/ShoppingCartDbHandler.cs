@@ -18,7 +18,7 @@ namespace Shoppy.DataAccess
             _configuration = configuration;
         }
 
-        public int addToCart(int pid,int uid, int quantity)
+        public int addToCart(int pid,int uid, int quantity, int cid, int sid)
         {
             DbConnection db = new DbConnection();
             SqlConnection con = db.getConnection(_configuration);
@@ -26,6 +26,8 @@ namespace Shoppy.DataAccess
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@pid", pid);
             cmd.Parameters.AddWithValue("@uid", uid);
+            cmd.Parameters.AddWithValue("@sid", sid);
+            cmd.Parameters.AddWithValue("@coid", cid);
             cmd.Parameters.AddWithValue("@quantity", quantity);
             cmd.Parameters.Add("@retValue", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.ReturnValue;
             con.Open();
@@ -71,6 +73,8 @@ namespace Shoppy.DataAccess
                             productImg = dr["coverImg"].ToString(),
                             uid = Int32.Parse(dr["uid"].ToString()),
                             quantity = Int32.Parse(dr["quantity"].ToString()),
+                            size = dr["size"].ToString(),
+                            color = dr["color"].ToString(),
                         });
                     }
 
